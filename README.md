@@ -1,10 +1,27 @@
 # My Personal Project
 
-## A subtitle
+## Trivia Game  
 
-A *bulleted* list:
-- item 1
-- item 2
-- item 3
+The main components of my game can be broken down into these 2 main parts:
 
-An example of text with **bold** and *italic* fonts.  
+*To-do List*:
+- Game Class
+- List of Game Class
+
+So for my game I was thinking of creating an application in the style of a 
+trivia game against a computer (random, not ai). The main idea of the project would be answering
+trivia questions against a computer. If for example, you answered correctly
+and the computer was wrong the computer would then lose a life. After finishing
+a game, the questions, answers, accuracy and maybe time spent on each question would 
+be recorded in a list containing all past games.
+
+This application can hopefully be used by anyone who wants
+to answer some trivia questions in a different context. I
+wanted to create this project because it combines two things
+I enjoy. I like trivia and testing your knowledge on various
+subjects. I also love playing games so I decided to create a
+trivia game application with popular gaming aspects like lives, 
+a timer and maybe more game concepts for the visual aspect of
+the project.
+
+
