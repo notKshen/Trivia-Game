@@ -29,6 +29,6 @@ the project.
 - As a user, I want to be able to start a trivia game and add it to a list of games played
 - As a user, I want to be able to view my past games
 - As a user, I want to be able to see my question accuracy
-- As a user, I want to be able to see how fast I answered a question
+- As a user, I want to be able to see my stats across all games
 - As a user, I want to be able to see how many games I have played in total
 
