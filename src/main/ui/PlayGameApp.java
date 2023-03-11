@@ -3,11 +3,22 @@ package ui;
 
 import model.TriviaGame;
 import model.TriviaGameHistory;
+import persistence.JsonReader;
+import persistence.JsonWriter;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
 // PLay game application
 public class PlayGameApp {
+    private static final String JSON_STORE = "./data/TriviaGame.json";
+    private static final String JSON_STORE1 = "./data/QuestionBank.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
+    private JsonReader jsonReader1;
     private int plives = 3;
     private int clives = 3;
     private double total = 0;
@@ -18,13 +29,21 @@ public class PlayGameApp {
 
 
     // Runs Trivia Game Application
-    public PlayGameApp() {
+    public PlayGameApp() throws FileNotFoundException {
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
+        jsonReader1 = new JsonReader(JSON_STORE1);
         System.out.println("Hello and Welcome to the Super Amazing Trivia Game! The rules are simple,");
         System.out.println("There are lives in this trivia game and when you get a question wrong you lose a life....");
         System.out.println("Unless the computer also answers wrong, then it is a draw.");
         System.out.println("Between you and the computer whoever loses all of their lives first loses");
         System.out.println("Good luck Challenger!");
         System.out.println("Answer in (A, B, C, D, E)");
+        System.out.println("n to start a new profile\nl to load a previous profile");
+        String ans = scan.nextLine();
+        if (ans.equals("l")) {
+            loadTriviaGameHistory();
+        }
         System.out.println("1 to start new game, 2 to view past games, 3 to quit");
         startGame();
     }
@@ -49,6 +68,9 @@ public class PlayGameApp {
                 System.out.println("1 to start new game, 2 to view past games, 3 to quit");
                 ans = scan.nextLine();
             }
+            if (ans.equals("3")) {
+                askSaveGame();
+            }
         }
     }
 
@@ -65,10 +87,17 @@ public class PlayGameApp {
         tgh.addGame(player);
         if (plives == 0) {
             System.out.println("Oh No You Lost D:");
-            System.out.println("1 to start new game, 2 to view past games, 3 to quit");
         } else {
             System.out.println("You Won!");
-            System.out.println("1 to start new game, 2 to view past games, 3 to quit");
+        }
+        System.out.println("1 to start new game, 2 to view past games, 3 to quit");
+    }
+
+    public void askSaveGame() {
+        System.out.println("Would you like to save your game history? Y/N");
+        String ans = scan.nextLine();
+        if (ans.equals("Y")) {
+            saveTriviaGameHistory();
         }
     }
 
@@ -94,7 +123,7 @@ public class PlayGameApp {
         System.out.println("What category would you like to choose?\nEosc");
         String cat = scan.nextLine();
         if (cat.equals("Eosc")) {
-            player.setEoscQuestions();
+            player.setQuestions(loadQuestions());
         }
     }
 
@@ -145,5 +174,40 @@ public class PlayGameApp {
         System.out.println("Correct Answer: " + correct);
         System.out.println("Player Lives: " + plives);
         System.out.println("Computer Lives: " + clives);
+    }
+
+    // EFFECTS: saves the Game History to file
+    private void saveTriviaGameHistory() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(tgh);
+            jsonWriter.close();
+            System.out.println("Saved play history to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+
+    // MODIFIES: this
+    // EFFECTS: loads Game History from file
+    private void loadTriviaGameHistory() {
+        try {
+            tgh = jsonReader.read();
+            System.out.println("Loaded play history from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads Questions from file
+    private HashMap<String, String> loadQuestions() {
+        try {
+            return jsonReader1.ready();
+        } catch (IOException e) {
+            //
+        }
+        return null;
     }
 }

@@ -1,10 +1,14 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 // Represents an account having an id, owner name and balance (in dollars)
-public class TriviaGameHistory {
+public class TriviaGameHistory implements Writable {
     private List<TriviaGame> loG;
 
     public TriviaGameHistory() {
@@ -38,4 +42,21 @@ public class TriviaGameHistory {
         return loG;
     }
 
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("loG", loGToJson());
+        return json;
+    }
+
+    // EFFECTS: returns things in this workroom as a JSON array
+    private JSONArray loGToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (TriviaGame t : loG) {
+            jsonArray.put(t.toJson());
+        }
+
+        return jsonArray;
+    }
 }

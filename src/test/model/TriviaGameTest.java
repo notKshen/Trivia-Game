@@ -17,9 +17,8 @@ class TriviaGameTest {
 
     @Test
     public void testConstructor() {
-        assertEquals("Game 6", tg.getName());
         assertEquals(0, tg.getAccuracy());
-        assertEquals(new HashMap<String, String>(), tg.getQuestions());
+        assertEquals(new HashMap<String, String>(), tg.getQuestionBank());
     }
 
     @Test
@@ -44,21 +43,23 @@ class TriviaGameTest {
     }
 
     @Test
-    public void testGetQuestion() {
-        tg.setEoscQuestions();
-        assertFalse(tg.getQuestion().equals(""));
-        assertEquals(11, tg.getQuestions().size());
+    public void testGetQuestions() {
+        HashMap<String,String> temp = new HashMap<>();
+        temp.put("a","1");
+        temp.put("b","2");
+        tg.setQuestions(temp);
+        assertEquals(temp,tg.getQuestionBank());
+        assertTrue(tg.getQuestionBank().containsKey("a"));
     }
 
     @Test
     public void testGetAnswer() {
-        String temp = "In a lightning strikes, what does the stepped leader do?\n"
-                + "A) It steps up the voltage like a transformer\n"
-                + "B) It produces a flickering that you can see by eye\n"
-                + "C) It is a luminescent sphere of plasma that expands step by step\n"
-                + "D) It is part of the lightning that makes the bright flash and thunder\n"
-                + "E) It makes the first electrical connection between the cloud and ground";
-        tg.setEoscQuestions();
-        assertEquals("E", tg.getAnswer(temp));
+        HashMap<String,String> temp = new HashMap<>();
+        temp.put("a","1");
+        temp.put("b","2");
+        tg.setQuestions(temp);
+        assertEquals("1",tg.getAnswer("a"));
     }
+
+
 }
