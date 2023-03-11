@@ -61,5 +61,33 @@ class TriviaGameTest {
         assertEquals("1",tg.getAnswer("a"));
     }
 
+    @Test
+    public void testGetQuestion() {
+        HashMap<String,String> temp = new HashMap<>();
+        temp.put("a","1");
+        tg.setQuestions(temp);
+        assertEquals("a" ,tg.getQuestion());
+    }
 
+    @Test
+    public void testGetQuestionMultiple() {
+        HashMap<String,String> temp = new HashMap<>();
+        temp.put("a","1");
+        temp.put("b","1");
+        tg.setQuestions(temp);
+        assertTrue(tg.getQuestion() != null);
+    }
+
+    @Test
+    public void testGetQuestionMultiple2() {
+        HashMap<String,String> temp = new HashMap<>();
+        temp.put("a","1");
+        temp.put("b","1");
+        tg.setQuestions(temp);
+        String str = tg.getQuestion();
+        while(!str.equals("a")) {
+            str = tg.getQuestion();
+        }
+        assertEquals("a",str);
+    }
 }
