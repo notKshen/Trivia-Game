@@ -59,84 +59,13 @@ public class PlayGameApp extends JFrame implements ActionListener {
         title();
         rules();
         newOrLoad();
-
-//        textField.setBounds(0,0,1200,100);
-//        textField.setBackground(new Color(238,250,253));
-//        textField.setBorder(null);
-//        textField.setHorizontalAlignment(SwingConstants.CENTER);
-//        textField.setEditable(false);
-//        textField.setFont(new Font("Arial",Font.BOLD,50));
-//        textField.setText("TEST");
-//
-//        textArea.setBounds(0,100,1200,100);
-//        textArea.setBackground(new Color(238,250,253));
-//        textArea.setBorder(null);
-//        textArea.setEditable(false);
-//        textArea.setFont(new Font("Arial",Font.BOLD,25));
-//        textArea.setLineWrap(true);
-//        textArea.setWrapStyleWord(true);
-//        textArea.setText("SAMPLE TEXT");
-//
-//        button1.setBounds(0,150,100,100);
-//        button1.setFont(new Font("Arial",Font.BOLD,50));
-//        button1.setFocusable(false);
-//        button1.addActionListener(this);
-//        button1.setText("A");
-//
-//        button2.setBounds(0,250,100,100);
-//        button2.setFont(new Font("Arial",Font.BOLD,50));
-//        button2.setFocusable(false);
-//        button2.addActionListener(this);
-//        button2.setText("B");
-//
-//        button3.setBounds(0,350,100,100);
-//        button3.setFont(new Font("Arial",Font.BOLD,50));
-//        button3.setFocusable(false);
-//        button3.addActionListener(this);
-//        button3.setText("C");
-//
-//        button4.setBounds(0,450,100,100);
-//        button4.setFont(new Font("Arial",Font.BOLD,50));
-//        button4.setFocusable(false);
-//        button4.addActionListener(this);
-//        button4.setText("D");
-//
-//        answerLabelA.setBounds(150,150,500,100);
-//        answerLabelA.setBackground(new Color(238,250,253));
-//        answerLabelA.setFont(new Font("Arial",Font.PLAIN,20));
-//        answerLabelA.setText("TEST");
-//
-//        answerLabelB.setBounds(150,250,500,100);
-//        answerLabelB.setBackground(new Color(238,250,253));
-//        answerLabelB.setFont(new Font("Arial",Font.PLAIN,20));
-//        answerLabelB.setText("TEST");
-//
-//        answerLabelC.setBounds(150,350,500,100);
-//        answerLabelC.setBackground(new Color(238,250,253));
-//        answerLabelC.setFont(new Font("Arial",Font.PLAIN,20));
-//        answerLabelC.setText("TEST");
-//
-//        answerLabelD.setBounds(150,450,500,100);
-//        answerLabelD.setBackground(new Color(238,250,253));
-//        answerLabelD.setFont(new Font("Arial",Font.PLAIN,20));
-//        answerLabelD.setText("TEST");
-
-
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
-
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         jsonReader1 = new JsonReader(JSON_STORE1);
-        System.out.println("n to start a new profile\nl to load a previous profile");
-        String ans = scan.nextLine();
-        if (ans.equals("l")) {
-            loadTriviaGameHistory();
-        }
-        System.out.println("1 to start new game, 2 to view past games, 3 to quit");
         startGame();
     }
 
@@ -185,12 +114,19 @@ public class PlayGameApp extends JFrame implements ActionListener {
         System.out.println("1 to start new game, 2 to view past games, 3 to quit");
     }
 
+    // buttons to save game
     public void askSaveGame() {
-        System.out.println("Would you like to save your game history? Y/N");
-        String ans = scan.nextLine();
-        if (ans.equals("Y")) {
-            saveTriviaGameHistory();
-        }
+        button1.setBounds(400,300,300,200);
+        button1.setFont(new Font("Arial",Font.BOLD,50));
+        button1.setActionCommand("saveY");
+        button1.setText("Yes");
+        button2.setBounds(400,500,300,200);
+        button2.setFont(new Font("Arial",Font.BOLD,50));
+        button2.setActionCommand("saveN");
+        button2.setText("No");
+        textArea.setText("Would you like to save your game history?");
+        add(textArea);
+        getContentPane().remove(button3);
     }
 
     // EFFECTS: Prints to console all games played with accuracy for each game and personal stats based on all games
@@ -438,11 +374,16 @@ public class PlayGameApp extends JFrame implements ActionListener {
             getContentPane().remove(textArea);
             nextStep();
         } else if (e.getActionCommand().equals("new game")) {
-            getContentPane().removeAll();
+            nextQuestion();
         } else if (e.getActionCommand().equals("past game")) {
-            getContentPane().removeAll();
+            nextQuestion();
         } else if (e.getActionCommand().equals("quit")) {
-            getContentPane().removeAll();
+            askSaveGame();
+        } else if (e.getActionCommand().equals("saveY")) {
+            saveTriviaGameHistory();
+            System.exit(0);
+        } else if (e.getActionCommand().equals("saveN")) {
+            System.exit(0);
         }
     }
 }
