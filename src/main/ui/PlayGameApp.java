@@ -6,14 +6,20 @@ import model.TriviaGameHistory;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+
 // PLay game application
-public class PlayGameApp {
+public class PlayGameApp extends JFrame implements ActionListener {
     private static final String JSON_STORE = "./data/TriviaGame.json";
     private static final String JSON_STORE1 = "./data/QuestionBank.json";
     private JsonWriter jsonWriter;
@@ -23,22 +29,108 @@ public class PlayGameApp {
     private int clives = 3;
     private double total = 0;
     private double corr = 0;
+    private int counter = 0;
     private TriviaGameHistory tgh = new TriviaGameHistory();
     private Scanner scan = new Scanner(System.in);
     private String [] arr = {"A","B","C","D","E"};
+    private JTextField textField = new JTextField();
+    private JTextArea textArea = new JTextArea();
+    private JButton button1 = new JButton();
+    private JButton button2 = new JButton();
+    private JButton button3 = new JButton();
+    private JButton button4 = new JButton();
+    private JLabel answerLabelA = new JLabel();
+    private JLabel answerLabelB = new JLabel();
+    private JLabel answerLabelC = new JLabel();
+    private JLabel answerLabelD = new JLabel();
+
+
+
 
 
     // Runs Trivia Game Application
     public PlayGameApp() throws FileNotFoundException {
+        super("Trivia Game");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setPreferredSize(new Dimension(1200,850));
+        ((JPanel) getContentPane()).setBorder(new EmptyBorder(13, 13, 13, 13));
+        getContentPane().setBackground(new Color(238,250,253));
+        setLayout(null);
+        title();
+        rules();
+        newOrLoad();
+
+//        textField.setBounds(0,0,1200,100);
+//        textField.setBackground(new Color(238,250,253));
+//        textField.setBorder(null);
+//        textField.setHorizontalAlignment(SwingConstants.CENTER);
+//        textField.setEditable(false);
+//        textField.setFont(new Font("Arial",Font.BOLD,50));
+//        textField.setText("TEST");
+//
+//        textArea.setBounds(0,100,1200,100);
+//        textArea.setBackground(new Color(238,250,253));
+//        textArea.setBorder(null);
+//        textArea.setEditable(false);
+//        textArea.setFont(new Font("Arial",Font.BOLD,25));
+//        textArea.setLineWrap(true);
+//        textArea.setWrapStyleWord(true);
+//        textArea.setText("SAMPLE TEXT");
+//
+//        button1.setBounds(0,150,100,100);
+//        button1.setFont(new Font("Arial",Font.BOLD,50));
+//        button1.setFocusable(false);
+//        button1.addActionListener(this);
+//        button1.setText("A");
+//
+//        button2.setBounds(0,250,100,100);
+//        button2.setFont(new Font("Arial",Font.BOLD,50));
+//        button2.setFocusable(false);
+//        button2.addActionListener(this);
+//        button2.setText("B");
+//
+//        button3.setBounds(0,350,100,100);
+//        button3.setFont(new Font("Arial",Font.BOLD,50));
+//        button3.setFocusable(false);
+//        button3.addActionListener(this);
+//        button3.setText("C");
+//
+//        button4.setBounds(0,450,100,100);
+//        button4.setFont(new Font("Arial",Font.BOLD,50));
+//        button4.setFocusable(false);
+//        button4.addActionListener(this);
+//        button4.setText("D");
+//
+//        answerLabelA.setBounds(150,150,500,100);
+//        answerLabelA.setBackground(new Color(238,250,253));
+//        answerLabelA.setFont(new Font("Arial",Font.PLAIN,20));
+//        answerLabelA.setText("TEST");
+//
+//        answerLabelB.setBounds(150,250,500,100);
+//        answerLabelB.setBackground(new Color(238,250,253));
+//        answerLabelB.setFont(new Font("Arial",Font.PLAIN,20));
+//        answerLabelB.setText("TEST");
+//
+//        answerLabelC.setBounds(150,350,500,100);
+//        answerLabelC.setBackground(new Color(238,250,253));
+//        answerLabelC.setFont(new Font("Arial",Font.PLAIN,20));
+//        answerLabelC.setText("TEST");
+//
+//        answerLabelD.setBounds(150,450,500,100);
+//        answerLabelD.setBackground(new Color(238,250,253));
+//        answerLabelD.setFont(new Font("Arial",Font.PLAIN,20));
+//        answerLabelD.setText("TEST");
+
+
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setResizable(false);
+
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         jsonReader1 = new JsonReader(JSON_STORE1);
-        System.out.println("Hello and Welcome to the Super Amazing Trivia Game! The rules are simple,");
-        System.out.println("There are lives in this trivia game and when you get a question wrong you lose a life....");
-        System.out.println("Unless the computer also answers wrong, then it is a draw.");
-        System.out.println("Between you and the computer whoever loses all of their lives first loses");
-        System.out.println("Good luck Challenger!");
-        System.out.println("Answer in (A, B, C, D, E)");
         System.out.println("n to start a new profile\nl to load a previous profile");
         String ans = scan.nextLine();
         if (ans.equals("l")) {
@@ -209,5 +301,148 @@ public class PlayGameApp {
             //
         }
         return null;
+    }
+
+    // EFFECTS: load title
+    public void title() {
+        textField.setBounds(0,10,1200,100);
+        textField.setBackground(new Color(238,250,253));
+        textField.setBorder(null);
+        textField.setHorizontalAlignment(SwingConstants.CENTER);
+        textField.setEditable(false);
+        textField.setFont(new Font("Ariel",Font.BOLD,100));
+        textField.setText("Cool Trivia Game !");
+        add(textField);
+    }
+
+    // EFFECTS: rules
+    public void rules() {
+        textArea.setBounds(10,175,1100,200);
+        textArea.setBackground(new Color(238,250,253));
+        textArea.setBorder(null);
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Arial",Font.PLAIN,25));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setText("Hello and Welcome to the Super Amazing Trivia Game! The rules are simple, "
+                + "There are lives in this trivia game and when you get a question wrong you lose a life.... "
+                + "Unless the computer also answers wrong, then it is a draw. "
+                + "Between you and the computer whoever loses all of their lives first loses.\n"
+                + "Good luck Challenger! \nAnswer in (A, B, C, D, E)");
+        add(textArea);
+    }
+
+    // EFFECTS: new or load profile button
+    public void newOrLoad() {
+        button1.setBounds(350,400,500, 200);
+        button1.setFont(new Font("Arial",Font.BOLD,25));
+        button1.setFocusable(false);
+        button1.addActionListener(this);
+        button1.setActionCommand("new");
+        button1.setText("New Profile");
+        add(button1);
+
+        button2.setBounds(350,600,500, 200);
+        button2.setFont(new Font("Arial",Font.BOLD,25));
+        button2.setFocusable(false);
+        button2.addActionListener(this);
+        button2.setActionCommand("load");
+        button2.setText("Load Profile");
+        add(button2);
+    }
+
+    public void nextQuestion() {
+        textField.setBounds(0,0,1200,100);
+        textField.setFont(new Font("Arial",Font.BOLD,50));
+        textField.setText("Question " + counter);
+        textArea.setBounds(0,100,1200,100);
+        textArea.setFont(new Font("Arial",Font.BOLD,25));
+        textArea.setText("SAMPLE TEXT");
+        setButton();
+        setAnswer();
+    }
+
+    // EFFECTS: sets button
+    public void setButton() {
+        button1.setBounds(0,150,100,100);
+        button1.setFont(new Font("Arial",Font.BOLD,50));
+        button1.setActionCommand("b1");
+        button1.setText("A");
+        button2.setBounds(0,250,100,100);
+        button2.setFont(new Font("Arial",Font.BOLD,50));
+        button2.setActionCommand("b2");
+        button2.setText("B");
+        button3.setBounds(0,350,100,100);
+        button3.setFont(new Font("Arial",Font.BOLD,50));
+        button3.setFocusable(false);
+        button3.addActionListener(this);
+        button3.setActionCommand("b3");
+        button3.setText("C");
+        button4.setBounds(0,450,100,100);
+        button4.setFont(new Font("Arial",Font.BOLD,50));
+        button4.setFocusable(false);
+        button4.addActionListener(this);
+        button4.setActionCommand("b4");
+        button4.setText("D");
+    }
+
+    // EFFECTS: set answer
+    public void setAnswer() {
+        answerLabelA.setBounds(150,150,500,100);
+        answerLabelA.setBackground(new Color(238,250,253));
+        answerLabelA.setFont(new Font("Arial",Font.PLAIN,20));
+        answerLabelA.setText("TEST");
+
+        answerLabelB.setBounds(150,250,500,100);
+        answerLabelB.setBackground(new Color(238,250,253));
+        answerLabelB.setFont(new Font("Arial",Font.PLAIN,20));
+        answerLabelB.setText("TEST");
+
+        answerLabelC.setBounds(150,350,500,100);
+        answerLabelC.setBackground(new Color(238,250,253));
+        answerLabelC.setFont(new Font("Arial",Font.PLAIN,20));
+        answerLabelC.setText("TEST");
+
+        answerLabelD.setBounds(150,450,500,100);
+        answerLabelD.setBackground(new Color(238,250,253));
+        answerLabelD.setFont(new Font("Arial",Font.PLAIN,20));
+        answerLabelD.setText("TEST");
+    }
+
+    // EFFECTS: next past of game
+    public void nextStep() {
+        button1.setBounds(0,170,1200,200);
+        button1.setFont(new Font("Arial",Font.BOLD,50));
+        button1.setActionCommand("new game");
+        button1.setText("New Game");
+        button2.setBounds(0,370,1200,200);
+        button2.setFont(new Font("Arial",Font.BOLD,50));
+        button2.setActionCommand("past game");
+        button2.setText("View Past Games");
+        button3.setBounds(0,570,1200,200);
+        button3.setFont(new Font("Arial",Font.BOLD,50));
+        button3.setFocusable(false);
+        button3.addActionListener(this);
+        button3.setActionCommand("quit");
+        button3.setText("Quit");
+        add(button3);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("load")) {
+            getContentPane().remove(textArea);
+            loadTriviaGameHistory();
+            nextStep();
+        } else if (e.getActionCommand().equals("new")) {
+            getContentPane().remove(textArea);
+            nextStep();
+        } else if (e.getActionCommand().equals("new game")) {
+            getContentPane().removeAll();
+        } else if (e.getActionCommand().equals("past game")) {
+            getContentPane().removeAll();
+        } else if (e.getActionCommand().equals("quit")) {
+            getContentPane().removeAll();
+        }
     }
 }

@@ -6,5 +6,9 @@
     {
         "game": 2,
         "accuracy": 33
+    },
+    {
+        "game": 3,
+        "accuracy": 0
     }
 ]}
