@@ -8,6 +8,7 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,8 +31,10 @@ public class PlayGameApp extends JFrame implements ActionListener {
     private double total = 0;
     private double corr = 0;
     private int counter = 0;
+    private TriviaGame player;
     private TriviaGameHistory tgh = new TriviaGameHistory();
     private Scanner scan = new Scanner(System.in);
+    private String temp;
     private String [] arr = {"A","B","C","D","E"};
     private JTextField textField = new JTextField();
     private JTextArea textArea = new JTextArea();
@@ -39,10 +42,16 @@ public class PlayGameApp extends JFrame implements ActionListener {
     private JButton button2 = new JButton();
     private JButton button3 = new JButton();
     private JButton button4 = new JButton();
+    private JButton button5 = new JButton();
     private JLabel answerLabelA = new JLabel();
     private JLabel answerLabelB = new JLabel();
     private JLabel answerLabelC = new JLabel();
     private JLabel answerLabelD = new JLabel();
+    private JLabel answerLabelE = new JLabel();
+    private String[] header = {"Games Played", "Accuracy"};
+    private JPanel lightPanel = new JPanel();
+    private ImageIcon title;
+    private JLabel imageAsLabel;
 
 
 
@@ -51,6 +60,46 @@ public class PlayGameApp extends JFrame implements ActionListener {
     // Runs Trivia Game Application
     public PlayGameApp() throws FileNotFoundException {
         super("Trivia Game");
+        setUpImage();
+        setUpGui();
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
+        jsonReader1 = new JsonReader(JSON_STORE1);
+        System.out.println("New Profile or Load Profile N/L");
+        String ans = scan.nextLine();
+        if (ans.equals("L")) {
+            loadTriviaGameHistory();
+        }
+        System.out.println("1 to start new game, 2 to view past games and 3 to quit.");
+        startGame();
+    }
+
+    private void setUpImage() {
+        loadImages();
+        setTitlePic();
+    }
+
+    private void setTitlePic() {
+        removeExistingImage();
+        imageAsLabel = new JLabel(title);
+        imageAsLabel.setBounds(0,0,1200,800);
+        add(imageAsLabel);
+    }
+
+    private void removeExistingImage() {
+        if (imageAsLabel != null) {
+            remove(imageAsLabel);
+        }
+    }
+
+    private void loadImages() {
+        String sep = System.getProperty("file.separator");
+        title = new ImageIcon(System.getProperty("user.dir") + sep
+                + "images" + sep + "title.jpg");
+    }
+
+    // EFFECTS: Set up GUI Components
+    private void setUpGui() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200,850));
         ((JPanel) getContentPane()).setBorder(new EmptyBorder(13, 13, 13, 13));
@@ -59,14 +108,21 @@ public class PlayGameApp extends JFrame implements ActionListener {
         title();
         rules();
         newOrLoad();
-        pack();
+        answerLabelA.setBackground(new Color(238,250,253));
+        answerLabelB.setBackground(new Color(238,250,253));
+        answerLabelC.setBackground(new Color(238,250,253));
+        answerLabelD.setBackground(new Color(238,250,253));
+        answerLabelE.setBackground(new Color(238,250,253));
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
-        jsonWriter = new JsonWriter(JSON_STORE);
-        jsonReader = new JsonReader(JSON_STORE);
-        jsonReader1 = new JsonReader(JSON_STORE1);
-        startGame();
+        pack();
+        button4.setFont(new Font("Arial",Font.BOLD,50));
+        button4.setFocusable(false);
+        button4.addActionListener(this);
+        button5.setFont(new Font("Arial",Font.BOLD,50));
+        button5.setFocusable(false);
+        button5.addActionListener(this);
     }
 
     // MODIFIES: this
@@ -116,33 +172,62 @@ public class PlayGameApp extends JFrame implements ActionListener {
 
     // buttons to save game
     public void askSaveGame() {
-        button1.setBounds(400,300,300,200);
+        getContentPane().removeAll();
+        button1.setBounds(450,350,300,200);
         button1.setFont(new Font("Arial",Font.BOLD,50));
         button1.setActionCommand("saveY");
         button1.setText("Yes");
-        button2.setBounds(400,500,300,200);
+        button2.setBounds(450,550,300,200);
         button2.setFont(new Font("Arial",Font.BOLD,50));
         button2.setActionCommand("saveN");
         button2.setText("No");
+        textArea.setBounds(10,175,1100,100);
         textArea.setText("Would you like to save your game history?");
         add(textArea);
-        getContentPane().remove(button3);
+        add(button1);
+        add(button2);
+        revalidate();
+        repaint();
+        System.out.println("Would you like to save game? Y/N");
+//        String ans = scan.nextLine();
+//        if (ans.equals("Y")) {
+//            saveTriviaGameHistory();
+//        }
     }
 
     // EFFECTS: Prints to console all games played with accuracy for each game and personal stats based on all games
     public void viewPastGames() {
+        JFrame jf = new JFrame();
+        jf.setTitle("TITLE");
+        JTable jt;
         List<TriviaGame> temp = tgh.getListOfGames();
-        if (temp.size() == 0) {
-            System.out.println("No Games played");
+        String [][] data = new String[temp.size()][2];
+        if (temp.size() == 0 || temp == null) {
+            textField.setText("No Games Played");
         } else {
-            for (TriviaGame t : temp) {
-                System.out.println(t.getName() + ", Accuracy: " + t.getAccuracy() + "%,");
+            for (int i = 0; i < data.length; i++) {
+                data[i][0] = temp.get(i).getName();
+                data[i][1] =  Integer.toString(temp.get(i).getAccuracy());
             }
-            System.out.println("\nPersonal Stats:\n"
-                    + "Total Games Played: "
-                    + tgh.totalGamesPlayed() + ", Total Accuracy: " + tgh.averageAccuracy() + "%");
+            jt = new JTable(data,header);
+            jt.setBounds(300,300,200,300);
+            JScrollPane sp = new JScrollPane(jt);
+            jt.setFillsViewportHeight(true);
+            jf.add(sp);
+            jf.setSize(500,200);
+            jf.setVisible(true);
+//            for (TriviaGame t : temp) {
+//                model.addRow(new Object[] {t.getName(), t.getAccuracy()});
+//                System.out.println(t.getName() + ", Accuracy: " + t.getAccuracy() + "%,");
+//            }
+//            model.addRow(new Object[] {});
+//            model.addRow(new Object[] {tgh.totalGamesPlayed(),tgh.averageAccuracy()});
+//            System.out.println("\nPersonal Stats:\n"
+//                    + "Total Games Played: "
+//                    + tgh.totalGamesPlayed() + ", Total Accuracy: " + tgh.averageAccuracy() + "%");
+//            add(model);
         }
-        System.out.println("1 to start new game, 2 to view past games, 3 to quit");
+//        System.out.println("1 to start new game, 2 to view past games, 3 to quit");
     }
 
     // MODIFIES: this
@@ -285,64 +370,144 @@ public class PlayGameApp extends JFrame implements ActionListener {
         button2.setActionCommand("load");
         button2.setText("Load Profile");
         add(button2);
+
+        button3.setFocusable(false);
+        button3.addActionListener(this);
     }
 
     public void nextQuestion() {
         textField.setBounds(0,0,1200,100);
         textField.setFont(new Font("Arial",Font.BOLD,50));
+        String question = player.getQuestion();
+        String correct = player.getAnswer(question);
         textField.setText("Question " + counter);
-        textArea.setBounds(0,100,1200,100);
-        textArea.setFont(new Font("Arial",Font.BOLD,25));
-        textArea.setText("SAMPLE TEXT");
-        setButton();
-        setAnswer();
+        counter++;
+        textArea.setBounds(10,100,1200,50);
+        textArea.setFont(new Font("Arial",Font.BOLD,20));
+        textArea.setText(question.substring(0,(question.indexOf("?") + 1)));
+        add(textArea);
+        setButton(correct);
+        setAnswer(question);
     }
 
     // EFFECTS: sets button
-    public void setButton() {
-        button1.setBounds(0,150,100,100);
+    public void setButton(String correct) {
+        setButtonAns(correct);
+        button1.setBounds(0,150,75,75);
         button1.setFont(new Font("Arial",Font.BOLD,50));
-        button1.setActionCommand("b1");
         button1.setText("A");
-        button2.setBounds(0,250,100,100);
+        button2.setBounds(0,225,75,75);
         button2.setFont(new Font("Arial",Font.BOLD,50));
-        button2.setActionCommand("b2");
         button2.setText("B");
-        button3.setBounds(0,350,100,100);
-        button3.setFont(new Font("Arial",Font.BOLD,50));
-        button3.setFocusable(false);
-        button3.addActionListener(this);
-        button3.setActionCommand("b3");
+        button3.setBounds(0,300,75,75);
         button3.setText("C");
-        button4.setBounds(0,450,100,100);
-        button4.setFont(new Font("Arial",Font.BOLD,50));
-        button4.setFocusable(false);
-        button4.addActionListener(this);
-        button4.setActionCommand("b4");
+        button4.setBounds(0,375,75,75);
         button4.setText("D");
+        button5.setBounds(0,450,75,75);
+        button5.setText("E");
+        add(button4);
+        add(button5);
     }
 
+    private void setButtonAns(String correct) {
+        button1.setActionCommand("wrong");
+        button2.setActionCommand("wrong");
+        button3.setActionCommand("wrong");
+        button4.setActionCommand("wrong");
+        button5.setActionCommand("wrong");
+        temp = computerChoice(correct);
+        if (correct.equals("A")) {
+            setButA(temp);
+        } else if (correct.equals("B")) {
+            setButB(temp);
+        } else if (correct.equals("C")) {
+            setButC(temp);
+        } else if (correct.equals("D")) {
+            setButD(temp);
+        } else if (correct.equals("E")) {
+            setButE(temp);
+        }
+
+    }
+
+    private void setButA(String temp) {
+        if (temp.equals("A")) {
+            button1.setActionCommand("tie");
+        } else {
+            button1.setActionCommand("right");
+            corr++;
+        }
+        total++;
+    }
+
+    private void setButB(String temp) {
+        if (temp.equals("B")) {
+            button2.setActionCommand("tie");
+        } else {
+            button2.setActionCommand("right");
+            corr++;
+        }
+        total++;
+    }
+
+    private void setButC(String temp) {
+        if (temp.equals("C")) {
+            button3.setActionCommand("tie");
+        } else {
+            button3.setActionCommand("right");
+            corr++;
+        }
+        total++;
+    }
+
+    private void setButD(String temp) {
+        if (temp.equals("D")) {
+            button4.setActionCommand("tie");
+        } else {
+            button4.setActionCommand("right");
+            corr++;
+        }
+        total++;
+    }
+
+    private void setButE(String temp) {
+        if (temp.equals("E")) {
+            button5.setActionCommand("tie");
+        } else {
+            button5.setActionCommand("right");
+            corr++;
+        }
+        total++;
+    }
+
+
     // EFFECTS: set answer
-    public void setAnswer() {
-        answerLabelA.setBounds(150,150,500,100);
-        answerLabelA.setBackground(new Color(238,250,253));
+    public void setAnswer(String question) {
+        answerLabelA.setBounds(110,150,1000,75);
         answerLabelA.setFont(new Font("Arial",Font.PLAIN,20));
-        answerLabelA.setText("TEST");
+        answerLabelA.setText(question.substring(question.indexOf("A)") + 2,question.indexOf("B)")));
 
-        answerLabelB.setBounds(150,250,500,100);
-        answerLabelB.setBackground(new Color(238,250,253));
+        answerLabelB.setBounds(110,225,1000,75);
         answerLabelB.setFont(new Font("Arial",Font.PLAIN,20));
-        answerLabelB.setText("TEST");
+        answerLabelB.setText(question.substring(question.indexOf("B)") + 2,question.indexOf("C)")));
 
-        answerLabelC.setBounds(150,350,500,100);
-        answerLabelC.setBackground(new Color(238,250,253));
+        answerLabelC.setBounds(110,300,1000,75);
         answerLabelC.setFont(new Font("Arial",Font.PLAIN,20));
-        answerLabelC.setText("TEST");
+        answerLabelC.setText(question.substring(question.indexOf("C)") + 2,question.indexOf("D)")));
 
-        answerLabelD.setBounds(150,450,500,100);
-        answerLabelD.setBackground(new Color(238,250,253));
+        answerLabelD.setBounds(110,375,1000,75);
         answerLabelD.setFont(new Font("Arial",Font.PLAIN,20));
-        answerLabelD.setText("TEST");
+        answerLabelD.setText(question.substring(question.indexOf("D)") + 2,question.indexOf("E)")));
+
+        answerLabelE.setBounds(110,450,1000,75);
+        answerLabelE.setFont(new Font("Arial",Font.PLAIN,20));
+        answerLabelE.setText(question.substring(question.indexOf("E)") + 2));
+
+        add(answerLabelA);
+        add(answerLabelB);
+        add(answerLabelC);
+        add(answerLabelD);
+        add(answerLabelE);
     }
 
     // EFFECTS: next past of game
@@ -357,33 +522,94 @@ public class PlayGameApp extends JFrame implements ActionListener {
         button2.setText("View Past Games");
         button3.setBounds(0,570,1200,200);
         button3.setFont(new Font("Arial",Font.BOLD,50));
-        button3.setFocusable(false);
-        button3.addActionListener(this);
         button3.setActionCommand("quit");
         button3.setText("Quit");
         add(button3);
     }
 
+    // EFFECTS: sets lives
+    public void setLives() {
+        plives = 3;
+        clives = 3;
+        total = 0;
+        corr = 0;
+        counter = 1;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("load")) {
-            getContentPane().remove(textArea);
-            loadTriviaGameHistory();
-            nextStep();
+            loadG();
         } else if (e.getActionCommand().equals("new")) {
-            getContentPane().remove(textArea);
-            nextStep();
+            newG();
         } else if (e.getActionCommand().equals("new game")) {
-            nextQuestion();
+            newGame();
         } else if (e.getActionCommand().equals("past game")) {
-            nextQuestion();
+            viewPastGames();
         } else if (e.getActionCommand().equals("quit")) {
             askSaveGame();
         } else if (e.getActionCommand().equals("saveY")) {
-            saveTriviaGameHistory();
-            System.exit(0);
+            saveGame();
         } else if (e.getActionCommand().equals("saveN")) {
             System.exit(0);
+        } else if (e.getActionCommand().equals("right")) {
+            right();
+        } else if (e.getActionCommand().equals("wrong")) {
+            wrong();
+        } else if (e.getActionCommand().equals("tie")) {
+            System.out.println("Tie");
+            nextQuestion();
         }
+    }
+
+    private void wrong() {
+        System.out.println("wrong");
+        plives--;
+        if (plives == 0) {
+            textArea.setText("");
+            player.setAccuracy(corr, total);
+            tgh.addGame(player);
+            newG();
+        } else {
+            nextQuestion();
+        }
+
+    }
+
+    private void right() {
+        System.out.println("rigjt");
+        clives--;
+        if (clives == 0) {
+            textArea.setText("");
+            player.setAccuracy(corr, total);
+            tgh.addGame(player);
+            newG();
+        } else {
+            nextQuestion();
+        }
+
+    }
+
+    private void saveGame() {
+        saveTriviaGameHistory();
+        System.exit(0);
+    }
+
+    private void newGame() {
+        player = new TriviaGame();
+        player.setQuestions(loadQuestions());
+        setLives();
+        nextQuestion();
+    }
+
+    private void newG() {
+        getContentPane().remove(textArea);
+        nextStep();
+    }
+
+    private void loadG() {
+        getContentPane().remove(textArea);
+        loadTriviaGameHistory();
+        nextStep();
     }
 }
