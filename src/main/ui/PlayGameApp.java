@@ -8,7 +8,6 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,11 +47,18 @@ public class PlayGameApp extends JFrame implements ActionListener {
     private JLabel answerLabelC = new JLabel();
     private JLabel answerLabelD = new JLabel();
     private JLabel answerLabelE = new JLabel();
-    private String[] header = {"Games Played", "Accuracy"};
-    private JPanel lightPanel = new JPanel();
-    private ImageIcon title;
-    private JLabel imageAsLabel;
-
+    private String[] header = {"Games Played", "Accuracy","Total Games Played","Total Accuracy"};
+    private ImageIcon lives;
+    private ImageIcon robot;
+    private ImageIcon stickman;
+    private JLabel imageAsLabel1;
+    private JLabel imageAsLabel2;
+    private JLabel imageAsLabel3;
+    private JLabel imageAsLabel4;
+    private JLabel imageAsLabel5;
+    private JLabel imageAsLabel6;
+    private JLabel imageAsLabel7;
+    private JLabel imageAsLabel8;
 
 
 
@@ -60,7 +66,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
     // Runs Trivia Game Application
     public PlayGameApp() throws FileNotFoundException {
         super("Trivia Game");
-        setUpImage();
+        loadImages();
         setUpGui();
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
@@ -74,28 +80,51 @@ public class PlayGameApp extends JFrame implements ActionListener {
         startGame();
     }
 
-    private void setUpImage() {
-        loadImages();
-        setTitlePic();
+    // EFFECTS: Sets up Lives Pic
+    private void setLivesPic() {
+        imageAsLabel1 = new JLabel(lives);
+        imageAsLabel1.setBounds(10,600,150,150);
+        imageAsLabel2 = new JLabel(lives);
+        imageAsLabel2.setBounds(110,600,150,150);
+        imageAsLabel3 = new JLabel(lives);
+        imageAsLabel3.setBounds(210,600,150,150);
+        imageAsLabel4 = new JLabel(lives);
+        imageAsLabel4.setBounds(1030,600,150,150);
+        imageAsLabel5 = new JLabel(lives);
+        imageAsLabel5.setBounds(930,600,150,150);
+        imageAsLabel6 = new JLabel(lives);
+        imageAsLabel6.setBounds(830,600,150,150);
+        add(imageAsLabel1);
+        add(imageAsLabel2);
+        add(imageAsLabel3);
+        add(imageAsLabel4);
+        add(imageAsLabel5);
+        add(imageAsLabel6);
     }
 
-    private void setTitlePic() {
-        removeExistingImage();
-        imageAsLabel = new JLabel(title);
-        imageAsLabel.setBounds(0,0,1200,800);
-        add(imageAsLabel);
+    // EFFECTS: Sets up Robot Pic
+    private void setRobotPic() {
+        imageAsLabel7 = new JLabel(robot);
+        imageAsLabel7.setBounds(615,550,200,200);
+        add(imageAsLabel7);
     }
 
-    private void removeExistingImage() {
-        if (imageAsLabel != null) {
-            remove(imageAsLabel);
-        }
+    // EFFECTS: Sets up StickMan Pic
+    private void setStickmanPic() {
+        imageAsLabel8 = new JLabel(stickman);
+        imageAsLabel8.setBounds(375,550,200,200);
+        add(imageAsLabel8);
     }
 
+    // EFFECTS: load images
     private void loadImages() {
         String sep = System.getProperty("file.separator");
-        title = new ImageIcon(System.getProperty("user.dir") + sep
-                + "images" + sep + "title.jpg");
+        lives = new ImageIcon(System.getProperty("user.dir") + sep
+                + "images" + sep + "lives.png");
+        robot = new ImageIcon(System.getProperty("user.dir") + sep
+                + "images" + sep + "robot.png");
+        stickman = new ImageIcon(System.getProperty("user.dir") + sep
+                + "images" + sep + "stickman.png");
     }
 
     // EFFECTS: Set up GUI Components
@@ -201,16 +230,19 @@ public class PlayGameApp extends JFrame implements ActionListener {
         jf.setTitle("TITLE");
         JTable jt;
         List<TriviaGame> temp = tgh.getListOfGames();
-        String [][] data = new String[temp.size()][2];
+        String [][] data = new String[temp.size()][4];
         if (temp.size() == 0 || temp == null) {
             textField.setText("No Games Played");
         } else {
             for (int i = 0; i < data.length; i++) {
                 data[i][0] = temp.get(i).getName();
-                data[i][1] =  Integer.toString(temp.get(i).getAccuracy());
+                data[i][1] = Integer.toString(temp.get(i).getAccuracy());
+                data[i][2] = "";
+                data[i][3] = "";
             }
+            data[temp.size() - 1][2] = Integer.toString(tgh.totalGamesPlayed());
+            data[temp.size() - 1][3] = Integer.toString(tgh.averageAccuracy());
             jt = new JTable(data,header);
-            jt.setBounds(300,300,200,300);
             JScrollPane sp = new JScrollPane(jt);
             jt.setFillsViewportHeight(true);
             jf.add(sp);
@@ -375,6 +407,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         button3.addActionListener(this);
     }
 
+    // EFFECTS: Gets Next question for gui
     public void nextQuestion() {
         textField.setBounds(0,0,1200,100);
         textField.setFont(new Font("Arial",Font.BOLD,50));
@@ -409,6 +442,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         add(button5);
     }
 
+    // EFFECTS: Sets button answers
     private void setButtonAns(String correct) {
         button1.setActionCommand("wrong");
         button2.setActionCommand("wrong");
@@ -430,6 +464,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
 
     }
 
+    // EFFECTS: Sets Button a
     private void setButA(String temp) {
         if (temp.equals("A")) {
             button1.setActionCommand("tie");
@@ -440,6 +475,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         total++;
     }
 
+    // EFFECTS: Sets Button b
     private void setButB(String temp) {
         if (temp.equals("B")) {
             button2.setActionCommand("tie");
@@ -450,6 +486,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         total++;
     }
 
+    // EFFECTS: Sets Button c
     private void setButC(String temp) {
         if (temp.equals("C")) {
             button3.setActionCommand("tie");
@@ -460,6 +497,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         total++;
     }
 
+    // EFFECTS: Sets Button d
     private void setButD(String temp) {
         if (temp.equals("D")) {
             button4.setActionCommand("tie");
@@ -470,6 +508,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         total++;
     }
 
+    // EFFECTS: Sets Button e
     private void setButE(String temp) {
         if (temp.equals("E")) {
             button5.setActionCommand("tie");
@@ -562,13 +601,25 @@ public class PlayGameApp extends JFrame implements ActionListener {
         }
     }
 
+    // EFFECTS: Sets wrong button
     private void wrong() {
-        System.out.println("wrong");
         plives--;
+        if (plives == 2) {
+            getContentPane().remove(imageAsLabel3);
+            reset();
+        } else if (plives == 1) {
+            getContentPane().remove(imageAsLabel2);
+            reset();
+        }
         if (plives == 0) {
-            textArea.setText("");
             player.setAccuracy(corr, total);
             tgh.addGame(player);
+            getContentPane().removeAll();
+            textField.setText("YOU LOSE D:");
+            add(button1);
+            add(button2);
+            add(textField);
+            reset();
             newG();
         } else {
             nextQuestion();
@@ -576,13 +627,25 @@ public class PlayGameApp extends JFrame implements ActionListener {
 
     }
 
+    // EFFECTS: Sets right button
     private void right() {
-        System.out.println("rigjt");
         clives--;
+        if (clives == 2) {
+            getContentPane().remove(imageAsLabel6);
+            reset();
+        } else if (clives == 1) {
+            getContentPane().remove(imageAsLabel5);
+            reset();
+        }
         if (clives == 0) {
-            textArea.setText("");
             player.setAccuracy(corr, total);
             tgh.addGame(player);
+            getContentPane().removeAll();
+            textField.setText("YOU WIN :D");
+            add(button1);
+            add(button2);
+            add(textField);
+            reset();
             newG();
         } else {
             nextQuestion();
@@ -590,23 +653,36 @@ public class PlayGameApp extends JFrame implements ActionListener {
 
     }
 
+    // EFFECTS: Saves game
     private void saveGame() {
         saveTriviaGameHistory();
         System.exit(0);
     }
 
+    // EFFECTS: Resets
+    public void reset() {
+        revalidate();
+        repaint();
+    }
+
+    // EFFECTS: New Game
     private void newGame() {
         player = new TriviaGame();
         player.setQuestions(loadQuestions());
         setLives();
+        setLivesPic();
+        setRobotPic();
+        setStickmanPic();
         nextQuestion();
     }
 
+    // EFFECTS: new profile
     private void newG() {
         getContentPane().remove(textArea);
         nextStep();
     }
 
+    // EFFECTS: load profile
     private void loadG() {
         getContentPane().remove(textArea);
         loadTriviaGameHistory();
