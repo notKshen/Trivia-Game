@@ -11,12 +11,24 @@ public class TriviaGame implements Writable {
     private int counterDisplay;
     private int accuracy;
     private HashMap<String, String> questionBank;
+    private boolean win;
 
     public TriviaGame() {
         questionBank = new HashMap<>();
         counter++;
         counterDisplay = counter;
         accuracy = 0;
+        win = false;
+    }
+
+    // EFFECTS sets Win
+    public void setWin(Boolean b) {
+        this.win = b;
+    }
+
+    // EFFECTS gets Win
+    public boolean getWin() {
+        return win;
     }
 
     // REQUIRES: Input be a question from questionBank

@@ -1,4 +1,18 @@
-{"loG": [{
-    "game": 1,
-    "accuracy": 25
-}]}
+{"loG": [
+    {
+        "game": 1,
+        "accuracy": 25
+    },
+    {
+        "game": 2,
+        "accuracy": 0
+    },
+    {
+        "game": 3,
+        "accuracy": 60
+    },
+    {
+        "game": 4,
+        "accuracy": 60
+    }
+]}

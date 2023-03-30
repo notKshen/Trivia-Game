@@ -59,6 +59,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
     private JLabel imageAsLabel6;
     private JLabel imageAsLabel7;
     private JLabel imageAsLabel8;
+    private JTable jt;
 
 
 
@@ -224,11 +225,12 @@ public class PlayGameApp extends JFrame implements ActionListener {
 //        }
     }
 
+
     // EFFECTS: Prints to console all games played with accuracy for each game and personal stats based on all games
     public void viewPastGames() {
         JFrame jf = new JFrame();
-        jf.setTitle("TITLE");
-        JTable jt;
+        setJF(jf);
+        setButtonPast();
         List<TriviaGame> temp = tgh.getListOfGames();
         String [][] data = new String[temp.size()][4];
         if (temp.size() == 0 || temp == null) {
@@ -243,11 +245,10 @@ public class PlayGameApp extends JFrame implements ActionListener {
             data[temp.size() - 1][2] = Integer.toString(tgh.totalGamesPlayed());
             data[temp.size() - 1][3] = Integer.toString(tgh.averageAccuracy());
             jt = new JTable(data,header);
+            jt.setBounds(0,0, 300, 200);
+            jt.setAutoCreateRowSorter(true);
             JScrollPane sp = new JScrollPane(jt);
-            jt.setFillsViewportHeight(true);
             jf.add(sp);
-            jf.setSize(500,200);
-            jf.setVisible(true);
 //            for (TriviaGame t : temp) {
 //                model.addRow(new Object[] {t.getName(), t.getAccuracy()});
 //                System.out.println(t.getName() + ", Accuracy: " + t.getAccuracy() + "%,");
@@ -260,6 +261,21 @@ public class PlayGameApp extends JFrame implements ActionListener {
 //            add(model);
         }
 //        System.out.println("1 to start new game, 2 to view past games, 3 to quit");
+    }
+
+    // sets button for filter wins
+    private void setButtonPast() {
+        button4.setText("Show Wins");
+        button4.setBounds(450,100,300,60);
+        button4.setActionCommand("filter");
+        add(button4);
+    }
+
+    // EFFECTS: sets jframe
+    private void setJF(JFrame jf) {
+        jf.setTitle("Past Games");
+        jf.setSize(600,300);
+        jf.setVisible(true);
     }
 
     // MODIFIES: this
@@ -596,8 +612,17 @@ public class PlayGameApp extends JFrame implements ActionListener {
         } else if (e.getActionCommand().equals("wrong")) {
             wrong();
         } else if (e.getActionCommand().equals("tie")) {
-            System.out.println("Tie");
             nextQuestion();
+        } else if (e.getActionCommand().equals("filter")) {
+            highlight();
+        }
+    }
+
+    private void highlight() {
+        for (int i = 0; i < tgh.totalGamesPlayed(); i++) {
+            if (tgh.getListOfGames().get(i).getWin()) {
+                jt.addRowSelectionInterval(i,i);
+            }
         }
     }
 
@@ -613,6 +638,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         }
         if (plives == 0) {
             player.setAccuracy(corr, total);
+            player.setWin(false);
             tgh.addGame(player);
             getContentPane().removeAll();
             textField.setText("YOU LOSE D:");
@@ -639,6 +665,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         }
         if (clives == 0) {
             player.setAccuracy(corr, total);
+            player.setWin(true);
             tgh.addGame(player);
             getContentPane().removeAll();
             textField.setText("YOU WIN :D");

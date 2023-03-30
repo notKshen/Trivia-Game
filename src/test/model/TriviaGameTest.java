@@ -38,6 +38,12 @@ class TriviaGameTest {
     }
 
     @Test
+    public void testSetWin() {
+        tg.setWin(true);
+        assertEquals(true, tg.getWin());
+    }
+
+    @Test
     public void testGetQuestionEmpty() {
         assertEquals("", tg.getQuestion());
     }
