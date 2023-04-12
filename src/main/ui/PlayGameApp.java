@@ -1,6 +1,8 @@
 package ui;
 
 
+import model.Event;
+import model.EventLog;
 import model.TriviaGame;
 import model.TriviaGameHistory;
 import persistence.JsonReader;
@@ -11,6 +13,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -130,7 +134,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
 
     // EFFECTS: Set up GUI Components
     private void setUpGui() {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        eventLog();
         setPreferredSize(new Dimension(1200,850));
         ((JPanel) getContentPane()).setBorder(new EmptyBorder(13, 13, 13, 13));
         getContentPane().setBackground(new Color(238,250,253));
@@ -153,6 +157,25 @@ public class PlayGameApp extends JFrame implements ActionListener {
         button5.setFont(new Font("Arial",Font.BOLD,50));
         button5.setFocusable(false);
         button5.addActionListener(this);
+    }
+
+    // EFFECTS: Sets up eventLog Action
+    private void eventLog() {
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                printEventLog();
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            }
+        });
+    }
+
+    // EFFECTS: Prints Event Log
+    private void printEventLog() {
+        EventLog el = EventLog.getInstance();
+        for (Event e : el) {
+            System.out.println(e.toString() + "\n");
+        }
     }
 
     // MODIFIES: this
@@ -622,6 +645,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
         for (int i = 0; i < tgh.totalGamesPlayed(); i++) {
             if (tgh.getListOfGames().get(i).getWin()) {
                 jt.addRowSelectionInterval(i,i);
+                EventLog.getInstance().logEvent(new Event("The wins have been highlighted :D"));
             }
         }
     }
@@ -640,6 +664,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
             player.setAccuracy(corr, total);
             player.setWin(false);
             tgh.addGame(player);
+            EventLog.getInstance().logEvent(new Event("Added Game to History :D"));
             getContentPane().removeAll();
             textField.setText("YOU LOSE D:");
             add(button1);
@@ -667,6 +692,7 @@ public class PlayGameApp extends JFrame implements ActionListener {
             player.setAccuracy(corr, total);
             player.setWin(true);
             tgh.addGame(player);
+            EventLog.getInstance().logEvent(new Event("Added Game to History :D"));
             getContentPane().removeAll();
             textField.setText("YOU WIN :D");
             add(button1);

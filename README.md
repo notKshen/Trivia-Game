@@ -41,3 +41,20 @@ the project.
 - You can locate my visual component by starting the game
 - You can save the state of my application by clicking the save button
 - You can reload the state of my application by clicking the load button
+
+Phase 4: Task 2
+
+Wed Apr 12 01:07:52 PDT 2023
+Added Game to History :D
+
+Wed Apr 12 01:07:54 PDT 2023
+Added Game to History :D
+
+Wed Apr 12 01:08:10 PDT 2023
+Added Game to History :D
+
+Wed Apr 12 01:08:13 PDT 2023
+The wins have been highlighted :D
+
+Wed Apr 12 01:08:14 PDT 2023
+The wins have been highlighted :D
