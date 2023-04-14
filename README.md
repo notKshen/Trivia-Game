@@ -58,3 +58,18 @@ The wins have been highlighted :D
 
 Wed Apr 12 01:08:14 PDT 2023
 The wins have been highlighted :D
+
+Phase 4: Task 3
+
+Firstly, I would like to just clean up all my code. 
+While working through the different phases, 
+I continually added new code to the bottom and now stepping 
+back and looking at the finished product made me realize
+how unreadable my code truly is. When trying to fix specific mistakes
+in past code I found it very difficult to find those methods quickly.
+Especially, when working with the gui the code started to get messy.
+Straight away, I could try to separate the different gui components
+into different classes like in the alarm system example to increase cohesion.
+I thought about implementing the design patterns we learned
+in class, but overall I feel the structure of my code is 
+quite simple and the design patterns would not help in this scenario.
